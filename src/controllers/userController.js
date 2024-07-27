@@ -37,7 +37,7 @@ const createUser = async (req, res, next) => {
         const verificationToken = crypto.randomBytes(32).toString("hex");
         console.log("verificationToken", verificationToken);
 
-        console.log("verificationToken", verificationToken );
+        console.log("verificationToken", verificationToken);
 
         try {
             await sendEmail(email, "Verify Your Email", verificationToken);
