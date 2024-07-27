@@ -86,13 +86,14 @@ const loginUser = async (req, res, next) => {
     try {
         const existingUser = await User.findOne({ email });
         if (!existingUser) {
-            // return next(createHttpError(400, "User Does Not Exist"));
             res.send({ status: 400, message: "User Does Not Exist" });
+            return next(createHttpError(400, "User Does Not Exist"));
             // res.status(400).json({ message: "User Does Not Exist" });
         }
 
         const isPasswordCorrect = await bcrypt.compare(password, existingUser.password);
         if (!isPasswordCorrect) {
+            res.send({ status: 400, message: "Wrong Password" });
             return next(createHttpError(400, "Wrong Password"));
         }
 
@@ -101,9 +102,10 @@ const loginUser = async (req, res, next) => {
 
         await existingUser.updateOne({ refreshToken });
 
-        res.status(200).json({ id: existingUser._id, name: existingUser.name, profileImage: existingUser.profileImage, accessToken, refreshToken, isLoggedIn: true, status: 200 });
+        res.status(200).json({message: "User successfully logged in",  id: existingUser._id, name: existingUser.name, profileImage: existingUser.profileImage, accessToken, refreshToken, isLoggedIn: true, status: 200 });
     } catch (error) {
         console.error('Login error:', error);
+        res.send({ status: 500, message: "Login Failed" });
         return next(createHttpError(500, "Login Failed"));
     }
 };
