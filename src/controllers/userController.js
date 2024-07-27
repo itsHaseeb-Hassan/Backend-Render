@@ -67,8 +67,7 @@ const createUser = async (req, res, next) => {
     // const refreshToken= jwt.sign({id:newUser._id},process.env.JWT_SECRET_REFRESH,{expiresIn:'1d'})
     // await newUser.updateOne({refreshToken})
     console.log(newUser._id)
-    res.status(200).json({id:newUser._id});
-    res.send({ status: 200, message: "User Created" });
+    res.status(200).json({id:newUser._id,message: "User Created" });
             } catch (hashError) {
                 console.error('User creation error:', hashError);
                 res.send({ status: 500, message: "User Creation Failed" });
