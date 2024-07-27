@@ -15,12 +15,14 @@ const createUser = async (req, res, next) => {
     console.log(name, email, password, profileImage);
 
     if (!name || !email || !password || !profileImage) {
+        res.send({ status: 400, message: "All Fields Are Required" });
         return next(createHttpError(400, "All Fields Are Required"));
     }
 
     try {
         const existingUser = await User.findOne({ email });
         if (existingUser) {
+            res.send({ status: 400, message: "User Already Exists" });
             return next(createHttpError(400, "User Already Exists"));
         }
 
@@ -32,6 +34,7 @@ const createUser = async (req, res, next) => {
             }
             )
         } catch (error) {
+            res.send({ status: 500, message: "Image Upload Failed" });
             return next(createHttpError(500, "Image Upload Failed"));
         }
 
@@ -42,9 +45,9 @@ const createUser = async (req, res, next) => {
 
         try {
             await sendEmail(email, "Verify Your Email", verificationToken);
-            console.log("Email sent successfully");
         } catch (emailError) {
             console.error('Email Sending Error:', emailError);
+            res.send({ status: 500, message: "Email Sending Failed" });
             return next(createHttpError(500, "Email Sending Failed"));
         }
 
@@ -65,12 +68,15 @@ const createUser = async (req, res, next) => {
     // await newUser.updateOne({refreshToken})
     console.log(newUser._id)
     res.status(200).json({id:newUser._id});
+    res.send({ status: 200, message: "User Created" });
             } catch (hashError) {
                 console.error('User creation error:', hashError);
+                res.send({ status: 500, message: "User Creation Failed" });
                 return next(createHttpError(500, "User Creation Failed"));
             }
     } catch (error) {
         console.error('User creation error:', error);
+        res.send({ status: 500, message: "User Creation Failed" });
         return next(createHttpError(500, "User Creation Failed"));
     }
 };
