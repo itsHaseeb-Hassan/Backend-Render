@@ -3,6 +3,7 @@ import createHttpError from 'http-errors';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import {cloudinary} from '../config/cloundinary/cloudinary.js'
+import sendEmail from '../utils/sendEmail.js';
 
 
 const createUser = async (req, res, next) => {
@@ -33,7 +34,18 @@ const createUser = async (req, res, next) => {
             return next(createHttpError(500, "Image Upload Failed"));
         }
 
-       
+        const verificationToken = crypto.randomBytes(32).toString("hex");
+        console.log("verificationToken", verificationToken);
+
+        console.log("verificationToken", verificationToken );
+
+        try {
+            await sendEmail(email, "Verify Your Email", verificationToken);
+            console.log("Email sent successfully");
+        } catch (emailError) {
+            console.error('Email Sending Error:', emailError);
+            return next(createHttpError(500, "Email Sending Failed"));
+        }
 
             try {
                 const hashedPassword = await bcrypt.hash(password, 10);
