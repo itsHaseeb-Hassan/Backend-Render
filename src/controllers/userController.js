@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import {cloudinary} from '../config/cloundinary/cloudinary.js'
 import sendEmail from '../utils/sendEmail.js';
+import crypto from 'crypto';
 
 
 const createUser = async (req, res, next) => {
@@ -55,6 +56,8 @@ const createUser = async (req, res, next) => {
                     email,
                     password: hashedPassword,
                     profileImage: result.secure_url,
+                    verificationToken,
+                    isVerified: false,
                 });
 
                 // const accessToken= jwt.sign({id:newUser._id},process.env.JWT_SECRET_ACCESS,{expiresIn:'2h'})
