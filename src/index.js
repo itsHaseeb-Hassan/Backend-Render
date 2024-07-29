@@ -27,7 +27,7 @@ app.set('views', './src/views'); // Ensure this path is correct relative to your
 
 // Root route
 app.get('/', (req, res) => {
-    res.render('verified/index', { message: 'Hello this is my Todo Application' }); // Ensure 'verified/index.ejs' exists
+    res.send('Hello this is my Todo Application'); // Ensure 'verified/index.ejs' exists
 });
 
 // API routes
