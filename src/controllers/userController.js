@@ -44,7 +44,7 @@ const createUser = async (req, res, next) => {
         console.log("verificationToken", verificationToken);
 
         try {
-            await sendEmail(email, "Verify Your Email", verificationToken);
+            await sendEmail(email, verificationToken);
         } catch (emailError) {
             console.error('Email Sending Error:', emailError);
             res.send({ status: 500, message: "Email Sending Failed" });
