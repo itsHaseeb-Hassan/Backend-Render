@@ -7,13 +7,12 @@ const createTodo = async (req, res, next) => {
     const { task, userId } = req.body; // Change from req.query to req.body
     console.log(task, userId);
     if (!task || !userId) {
-      res.send({ status: 400, message: "All fields are required" });
       const error = createHttpError(400, 'All fields are required');
+      return next(res.json({ error }));
     }
     try {
       const todoExist = await Todo.findOne({ userId, task });
       if (todoExist) {
-        res.send({ status: 400, message: "Todo already exists for this user" });
         const error = createHttpError(400, 'Todo already exists for this user');
         return next(res.json({ error }));
       }
@@ -23,9 +22,8 @@ const createTodo = async (req, res, next) => {
       });
       console.log("newTodo", newTodo);
       const savedTodo = await newTodo.save();
-       res.status(201).json({ savedTodo , message: "Todo created successfully" });
+       res.status(201).json({ savedTodo });
     } catch (error) {
-      res.send({ status: 500, message: "Internal Server Error" });
       const err = createHttpError(500, 'Internal Server Error');
       return next(res.json({ err }));
     }
@@ -35,7 +33,6 @@ const createTodo = async (req, res, next) => {
     const { id } = req.body;
     console.log("id", id);
     if (!id) {
-      res.send({ status: 400, message: "All fields are required" });
       const error = createHttpError(400, 'All fields are required');
       return next(error);
     }
@@ -43,7 +40,6 @@ const createTodo = async (req, res, next) => {
       // Find the todo item by id
       const todo = await Todo.findById(id);
       if (!todo) {
-        res.send({ status: 404, message: "Todo not found" });
         const error = createHttpError(404, 'Todo not found');
         return next(error);
       }
@@ -54,7 +50,7 @@ const createTodo = async (req, res, next) => {
       // Save the updated todo item
       const updatedTodo = await todo.save();
   
-      res.status(200).json({ updatedTodo, message: "Todo completed successfully" });
+      res.status(200).json({ updatedTodo });
     } catch (error) {
       const err = createHttpError(500, 'Internal Server Error');
       return next(err);
@@ -66,9 +62,8 @@ const getAllTodos = async (req, res, next) => {
     const { userId } = req.query;
     try {
         const todos = await Todo.find({ userId });
-        res.status(200).json({ todos, message: "Todos fetched successfully" });
+        res.status(200).json({ todos });
     } catch (error) {
-        res.send({ status: 500, message: "Internal Server Error" });
         const err = createHttpError(500, 'Internal Server Error');
         return next(err);
     }
@@ -81,16 +76,14 @@ const updateTodo = async (req, res, next) => {
   const { id, task } = req.body;
   console.log("id, task", id, task);
   if (!id || !task) {
-    res.send({ status: 400, message: "All fields are required" });
     const error = createHttpError(400, 'All fields are required');
     return next(error);
   }
   try {
     const updatedTodo = await Todo.findByIdAndUpdate(id, { task }, { new: true });
-    res.status(200).json({ updatedTodo, message: "Todo updated successfully" });
+    res.status(200).json({ updatedTodo });
     console.log("updatedTodo", updatedTodo);
   } catch (error) {
-    res.send({ status: 500, message: "Internal Server Error" });
     const err = createHttpError(500, 'Internal Server Error');
     return next(err);
   }
@@ -102,11 +95,10 @@ const deleteTodo = async (req, res, next) => {
     try {
         const deletedTodo = await Todo.findByIdAndDelete(id);
         if (!deletedTodo) {
-            return res.status(404).json({ message: 'Todo not found' });
+            return res.status(404).json({ error: 'Todo not found' });
         }
         res.status(200).json({ message: 'Todo deleted successfully', deletedTodo });
     } catch (error) {
-        res.send({ status: 500, message: "Internal Server Error" });
         const err = createHttpError(500, 'Internal Server Error');
         return next(err);
     }
