@@ -13,7 +13,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use(cors({
-    origin: 'http://localhost:5173', // Allow only this origin
+    origin: 'http://localhost:5173' || 'https://todo-frontend-xi.vercel.app', // Allow only this origin
     methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow these HTTP methods
     credentials: true // Allow cookies to be sent with requests
 }));
