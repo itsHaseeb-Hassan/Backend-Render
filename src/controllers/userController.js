@@ -110,4 +110,24 @@ const loginUser = async (req, res, next) => {
     }
 };
 
-export { createUser, loginUser };
+const verifyEmail = async (req, res) => {
+    try {
+        const token = req.params.token;
+        const user = await User.findOne({ verificationToken: token });
+
+        if (!user) {
+            return res.status(400).send('Invalid token');
+        }
+
+        user.isVerified = true;
+        user.verificationToken = token; // Clear the token after verification
+        await user.save();
+
+        res.render('verified'); // Render your EJS page (or use res.sendFile for HTML)
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Internal Server Error');
+    }
+};
+
+export { createUser, loginUser ,verifyEmail};

@@ -1,14 +1,18 @@
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
+
 dotenv.config();
 
 const subject = "Verify your email";
 
 const sendEmail = async (email, verificationToken) => {
+    let token=verificationToken
+    console.log("token in send email", token);
+    let url = `${process.env.BASE_URL}/api/users/verify/${token}`;
+    console.log("url", url);
+    let message = `Click on the link to verify your email: ${url}`;
 
-    const url = `${process.env.BASE_URL}/users/verify/${verificationToken}`;
-        console.log("url", url);
-        let message = `Click on the link to verify your email: ${url}`;
+    console.log("message", message);
 
     try {
         var transporter = nodemailer.createTransport({
